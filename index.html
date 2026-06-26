@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Midland Pool Day</title>
+  <title>Pool Day</title>
   <style>
     :root {
       --bg: #f3faff;
@@ -186,7 +186,12 @@
       color: #fff;
     }
 
-    .modeWrap {
+    .controlStack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .toggleWrap {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -194,23 +199,27 @@
       border: 1px solid var(--line);
       padding: 8px 10px;
       border-radius: 999px;
+      width: fit-content;
+      max-width: 100%;
     }
 
-    .modeLabel {
+    .toggleLabel {
       font-size: 13px;
       font-weight: 800;
       color: var(--muted);
+      white-space: nowrap;
     }
 
-    .modeToggle {
+    .toggleGroup {
       display: flex;
       background: #e9f3fa;
       border-radius: 999px;
       padding: 3px;
       gap: 3px;
+      flex-wrap: wrap;
     }
 
-    .modeBtn {
+    .toggleBtn {
       border-radius: 999px;
       padding: 8px 11px;
       font-size: 13px;
@@ -218,7 +227,7 @@
       color: #14527d;
     }
 
-    .modeBtn.active {
+    .toggleBtn.active {
       background: var(--blue);
       color: #fff;
     }
@@ -442,7 +451,7 @@
         align-items: stretch;
       }
 
-      .modeWrap {
+      .toggleWrap {
         width: 100%;
         justify-content: space-between;
         border-radius: 18px;
@@ -465,10 +474,10 @@
 
 <body>
   <header>
-    <h1>🏊 Midland Pool Day</h1>
+    <h1>🏊 Pool Day</h1>
     <p class="subtitle">
-      Live pool-day helper for Midland, Texas using Open-Meteo forecast and air-quality data.
-      Switch between Toddler Mode and Adult Mode to change how conservative the recommendation is.
+      Live pool-day helper for Midland, TX and Sewickley, PA using Open-Meteo forecast and air-quality data.
+      Switch location and mode to change the recommendation.
     </p>
   </header>
 
@@ -480,7 +489,7 @@
           <div>
             <h2 id="headline">Load live weather</h2>
             <div id="summary" class="muted">
-              Click the button to fetch today plus the next 2 days for Midland.
+              Pick a location and fetch today plus the next 2 days.
             </div>
             <div id="score" class="status"></div>
           </div>
@@ -488,15 +497,25 @@
         <div id="reasons" class="pillbox"></div>
       </div>
 
-      <div class="card">
+      <div class="card controlStack">
         <div class="note">
           <b>Data source:</b> Open-Meteo forecast + air quality APIs. No API key required.
           Dust risk is estimated using wind speed, wind direction, PM10, humidity, and precipitation probability.
         </div>
-        <p>
+
+        <div class="toggleWrap">
+          <span class="toggleLabel">Location</span>
+          <div class="toggleGroup">
+            <button id="midlandBtn" class="toggleBtn active" type="button">🌵 Midland</button>
+            <button id="sewickleyBtn" class="toggleBtn" type="button">🌳 Sewickley</button>
+          </div>
+        </div>
+
+        <div>
           <button id="refreshBtn">Refresh live weather</button>
           <button id="sampleBtn" class="secondary">Load sample</button>
-        </p>
+        </div>
+
         <div id="loadStatus" class="status"></div>
         <div id="modeNote" class="modeNote"></div>
       </div>
@@ -511,11 +530,11 @@
           <button class="tab" data-tab="sources">Sources</button>
         </div>
 
-        <div class="modeWrap">
-          <span class="modeLabel">Mode</span>
-          <div class="modeToggle">
-            <button id="toddlerModeBtn" class="modeBtn active" type="button">👶 Toddler</button>
-            <button id="adultModeBtn" class="modeBtn" type="button">🧑 Adult</button>
+        <div class="toggleWrap">
+          <span class="toggleLabel">Mode</span>
+          <div class="toggleGroup">
+            <button id="toddlerModeBtn" class="toggleBtn active" type="button">👶 Toddler</button>
+            <button id="adultModeBtn" class="toggleBtn" type="button">🧑 Adult</button>
           </div>
         </div>
       </div>
@@ -576,11 +595,10 @@
         <li>Still rejects dangerous heat, poor AQI, high dust, and high rain/storm chances.</li>
       </ul>
 
-      <h4>General rules</h4>
+      <h4>Location note</h4>
       <ul>
-        <li><b>Great:</b> warm but not too hot, low rain, low/moderate wind, manageable UV, acceptable air quality.</li>
-        <li><b>Maybe:</b> hot, breezy, high UV, moderate PM10/dust, or some shower risk. Prefer morning or evening.</li>
-        <li><b>Skip:</b> dangerous heat, strong wind, high rain/storm risk, poor air quality, or high dust risk.</li>
+        <li><b>Midland:</b> dust risk considers dry/windy West Texas conditions.</li>
+        <li><b>Sewickley:</b> dust risk is usually lower, but AQI/PM and storms still matter.</li>
       </ul>
     </section>
 
@@ -596,18 +614,38 @@
       </p>
       <p>
         Cross-check:
-        <a target="_blank" rel="noreferrer" href="https://forecast.weather.gov/MapClick.php?lat=31.9973&lon=-102.0779">NWS Midland forecast</a>
+        <a id="nwsLink" target="_blank" rel="noreferrer" href="#">NWS forecast</a>
         |
-        <a target="_blank" rel="noreferrer" href="https://www.airnow.gov/?city=Midland&state=TX&country=USA">AirNow Midland</a>
+        <a id="airNowLink" target="_blank" rel="noreferrer" href="#">AirNow</a>
       </p>
     </section>
   </main>
 
   <script>
-    const LAT = 31.9973;
-    const LON = -102.0779;
-    const TZ = "America/Chicago";
+    const LOCATIONS = {
+      midland: {
+        key: "midland",
+        shortName: "Midland",
+        name: "Midland, TX",
+        lat: 31.9973,
+        lon: -102.0779,
+        timezone: "America/Chicago",
+        nws: "https://forecast.weather.gov/MapClick.php?lat=31.9973&lon=-102.0779",
+        airnow: "https://www.airnow.gov/?city=Midland&state=TX&country=USA"
+      },
+      sewickley: {
+        key: "sewickley",
+        shortName: "Sewickley",
+        name: "Sewickley, PA",
+        lat: 40.5365,
+        lon: -80.1845,
+        timezone: "America/New_York",
+        nws: "https://forecast.weather.gov/MapClick.php?lat=40.5365&lon=-80.1845",
+        airnow: "https://www.airnow.gov/?city=Sewickley&state=PA&country=USA"
+      }
+    };
 
+    let selectedLocationKey = "midland";
     let appData = [];
     let mode = "toddler";
     let lastConfettiKey = "";
@@ -665,6 +703,10 @@
       }
     };
 
+    function currentLocation() {
+      return LOCATIONS[selectedLocationKey];
+    }
+
     function clamp(x, min, max) {
       return Math.max(min, Math.min(max, x));
     }
@@ -702,6 +744,7 @@
     function classifyDust({ windMph, windDirDeg, pm10, humidity, rainChance }) {
       let score = 0;
       const dir = windDirText(windDirDeg);
+      const loc = currentLocation();
 
       if (windMph >= 30) score += 4;
       else if (windMph >= 24) score += 3;
@@ -719,6 +762,9 @@
 
       if (Number.isFinite(humidity) && humidity < 20) score += 1;
       if (Number.isFinite(rainChance) && rainChance >= 40) score -= 1;
+
+      // Sewickley is less prone to West Texas-style blowing sand.
+      if (loc.key === "sewickley") score -= 1;
 
       if (score >= 5) return "High";
       if (score >= 2) return "Moderate";
@@ -898,23 +944,24 @@
     function makeSmartRecommendation(daySummary) {
       const best = daySummary.best || [];
       const cfg = MODE_CONFIG[mode];
+      const loc = currentLocation();
 
       if (!best.length) {
-        return `${cfg.label}: I’d skip the pool today. The forecast has enough heat, wind, rain, UV, dust, or air-quality concerns that indoor play is the safer bet.`;
+        return `${loc.name} • ${cfg.label}: I’d skip the pool today. The forecast has enough heat, wind, rain, UV, dust, or air-quality concerns that indoor play is the safer bet.`;
       }
 
       const bestTimes = best.map(h => fmtHour(h.time)).join(", ");
       const flags = daySummary.flags.length ? daySummary.flags.join(", ") : "no major issues";
 
       if (daySummary.decision.verdict === "Great") {
-        return `${cfg.label}: Best bet is around ${bestTimes}. Conditions look pool-friendly overall. Main things to watch: ${flags}. Bring sunscreen, water, and shade just to be safe.`;
+        return `${loc.name} • ${cfg.label}: Best bet is around ${bestTimes}. Conditions look pool-friendly overall. Main things to watch: ${flags}. Bring sunscreen, water, and shade just to be safe.`;
       }
 
       if (daySummary.decision.verdict === "Maybe") {
-        return `${cfg.label}: Possible, but be selective. Best windows appear to be ${bestTimes}. Watch for ${flags}, and avoid the hottest/brightest part of the afternoon.`;
+        return `${loc.name} • ${cfg.label}: Possible, but be selective. Best windows appear to be ${bestTimes}. Watch for ${flags}, and avoid the hottest/brightest part of the afternoon.`;
       }
 
-      return `${cfg.label}: Not ideal today. If you go anyway, keep it short and aim for ${bestTimes}. Main concerns: ${flags}.`;
+      return `${loc.name} • ${cfg.label}: Not ideal today. If you go anyway, keep it short and aim for ${bestTimes}. Main concerns: ${flags}.`;
     }
 
     function makePackList(daySummary) {
@@ -931,6 +978,10 @@
       if (mode === "toddler") {
         items.push("🧸 Pool toy");
         items.push("👕 Dry clothes");
+      }
+
+      if (selectedLocationKey === "sewickley") {
+        items.push("🌦️ Check pop-up storms");
       }
 
       return items;
@@ -982,13 +1033,14 @@
     }
 
     async function loadWeather() {
-      $("loadStatus").textContent = "Loading live weather…";
+      const loc = currentLocation();
+      $("loadStatus").textContent = `Loading live weather for ${loc.name}…`;
 
       try {
         const forecastUrl =
           "https://api.open-meteo.com/v1/forecast" +
-          `?latitude=${LAT}&longitude=${LON}` +
-          `&timezone=${encodeURIComponent(TZ)}` +
+          `?latitude=${loc.lat}&longitude=${loc.lon}` +
+          `&timezone=${encodeURIComponent(loc.timezone)}` +
           "&forecast_days=3" +
           "&temperature_unit=fahrenheit" +
           "&wind_speed_unit=mph" +
@@ -997,8 +1049,8 @@
 
         const airUrl =
           "https://air-quality-api.open-meteo.com/v1/air-quality" +
-          `?latitude=${LAT}&longitude=${LON}` +
-          `&timezone=${encodeURIComponent(TZ)}` +
+          `?latitude=${loc.lat}&longitude=${loc.lon}` +
+          `&timezone=${encodeURIComponent(loc.timezone)}` +
           "&forecast_days=3" +
           "&hourly=pm10,pm2_5,us_aqi";
 
@@ -1051,19 +1103,21 @@
         appData = Array.from(byDate.values()).slice(0, 3);
 
         $("loadStatus").textContent =
-          "Loaded live data at " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + ".";
+          `Loaded ${loc.name} at ` + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + ".";
 
+        updateLinks();
         render();
       } catch (err) {
         console.error(err);
         $("loadStatus").textContent =
           "Could not load live weather: " + err.message +
-          ". If you opened the file directly, try VS Code Live Server.";
+          ". If you opened the file directly, try VS Code Live Server or GitHub Pages.";
       }
     }
 
     function loadSample() {
       const now = new Date();
+      const loc = currentLocation();
 
       appData = [0,1,2].map(dayOffset => {
         const d = new Date(now);
@@ -1072,15 +1126,20 @@
         const hours = [];
 
         for (let h = 0; h < 24; h++) {
-          const tempPeak = [94, 99, 88][dayOffset];
+          const isMidland = selectedLocationKey === "midland";
+
+          const tempPeak = isMidland
+            ? [94, 99, 88][dayOffset]
+            : [82, 86, 79][dayOffset];
+
           const heat = Math.max(0, 1 - Math.abs(h - 15) / 8);
           const tempF = Math.round(tempPeak - 14 + heat * 14);
-          const windMph = [13, 21, 26][dayOffset] + (h > 13 ? 2 : 0);
-          const windDirDeg = [180, 235, 270][dayOffset];
-          const rainChance = [10, 25, 55][dayOffset];
-          const uv = Math.round([9, 10, 6][dayOffset] * Math.max(0, 1 - Math.abs(h - 13) / 6));
-          const pm10 = [35, 75, 120][dayOffset];
-          const humidity = [35, 22, 45][dayOffset];
+          const windMph = (isMidland ? [13, 21, 26] : [7, 11, 13])[dayOffset] + (h > 13 ? 2 : 0);
+          const windDirDeg = isMidland ? [180, 235, 270][dayOffset] : [220, 240, 260][dayOffset];
+          const rainChance = isMidland ? [10, 25, 55][dayOffset] : [20, 45, 35][dayOffset];
+          const uv = Math.round((isMidland ? [9, 10, 6] : [7, 8, 5])[dayOffset] * Math.max(0, 1 - Math.abs(h - 13) / 6));
+          const pm10 = isMidland ? [35, 75, 120][dayOffset] : [18, 25, 35][dayOffset];
+          const humidity = isMidland ? [35, 22, 45][dayOffset] : [58, 64, 70][dayOffset];
 
           const row = {
             time: `${date}T${String(h).padStart(2,"0")}:00`,
@@ -1092,7 +1151,7 @@
             uv,
             pm10,
             pm25: Math.round(pm10 / 3),
-            usAqi: [55, 85, 115][dayOffset]
+            usAqi: isMidland ? [55, 85, 115][dayOffset] : [42, 55, 62][dayOffset]
           };
 
           row.dustRisk = classifyDust(row);
@@ -1102,7 +1161,7 @@
         return { date, hours };
       });
 
-      $("loadStatus").textContent = "Loaded sample data.";
+      $("loadStatus").textContent = `Loaded sample data for ${loc.name}.`;
       render();
     }
 
@@ -1115,13 +1174,35 @@
       render();
     }
 
+    function setLocation(nextKey) {
+      selectedLocationKey = nextKey;
+
+      $("midlandBtn").classList.toggle("active", selectedLocationKey === "midland");
+      $("sewickleyBtn").classList.toggle("active", selectedLocationKey === "sewickley");
+
+      appData = [];
+      lastConfettiKey = "";
+      updateLinks();
+      render();
+      loadWeather();
+    }
+
+    function updateLinks() {
+      const loc = currentLocation();
+      $("nwsLink").href = loc.nws;
+      $("nwsLink").textContent = `NWS ${loc.name}`;
+      $("airNowLink").href = loc.airnow;
+      $("airNowLink").textContent = `AirNow ${loc.name}`;
+    }
+
     function render() {
       const cfg = MODE_CONFIG[mode];
-      $("modeNote").textContent = cfg.summary;
+      const loc = currentLocation();
+      $("modeNote").textContent = `${cfg.summary} Current location: ${loc.name}.`;
 
       if (!appData.length) {
-        $("headline").textContent = "Load live weather";
-        $("summary").textContent = `Current mode: ${cfg.label}. Click the button to fetch live weather for Midland.`;
+        $("headline").textContent = `Load live weather for ${loc.name}`;
+        $("summary").textContent = `Current mode: ${cfg.label}. Click refresh to fetch live weather.`;
         $("badge").className = "badge ok";
         $("badge").textContent = "?";
         $("score").textContent = "";
@@ -1138,7 +1219,7 @@
       const today = summaries[0];
 
       const greatCount = summaries.filter(d => d.decision.verdict === "Great").length;
-      const confettiKey = `${mode}-${summaries.map(d => d.decision.verdict).join("-")}-${summaries.map(d => d.date).join("-")}`;
+      const confettiKey = `${selectedLocationKey}-${mode}-${summaries.map(d => d.decision.verdict).join("-")}-${summaries.map(d => d.date).join("-")}`;
 
       if (greatCount === 3 && confettiKey !== lastConfettiKey) {
         lastConfettiKey = confettiKey;
@@ -1148,14 +1229,14 @@
       $("badge").className = "badge " + className(today.decision.verdict);
       $("badge").textContent = icon(today.decision.verdict);
 
-      $("headline").textContent = `${today.decision.verdict} pool day for ${today.label}`;
+      $("headline").textContent = `${today.decision.verdict} pool day for ${loc.shortName}`;
 
       $("summary").textContent =
         today.decision.verdict === "Great"
-          ? `${cfg.label}: Looks like a good pool day. Still plan shade, water, sunscreen, and breaks.`
+          ? `${loc.name} • ${cfg.label}: Looks like a good pool day. Still plan shade, water, sunscreen, and breaks.`
           : today.decision.verdict === "Maybe"
-            ? `${cfg.label}: Possible, but choose the safest window and watch the flagged conditions.`
-            : `${cfg.label}: I would skip or choose indoor play based on these conditions.`;
+            ? `${loc.name} • ${cfg.label}: Possible, but choose the safest window and watch the flagged conditions.`
+            : `${loc.name} • ${cfg.label}: I would skip or choose indoor play based on these conditions.`;
 
       $("score").textContent = `Pool comfort score: ${today.decision.score}/100`;
 
@@ -1258,6 +1339,10 @@
     $("toddlerModeBtn").addEventListener("click", () => setMode("toddler"));
     $("adultModeBtn").addEventListener("click", () => setMode("adult"));
 
+    $("midlandBtn").addEventListener("click", () => setLocation("midland"));
+    $("sewickleyBtn").addEventListener("click", () => setLocation("sewickley"));
+
+    updateLinks();
     loadWeather();
   </script>
 </body>
