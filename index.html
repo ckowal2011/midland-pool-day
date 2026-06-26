@@ -1,0 +1,1264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Midland Pool Day</title>
+  <style>
+    :root {
+      --bg: #f3faff;
+      --ink: #183044;
+      --muted: #607789;
+      --line: #d9e7ef;
+      --good: #19a974;
+      --ok: #f5a623;
+      --bad: #df4b4b;
+      --blue: #1479c9;
+      --panel: #ffffff;
+      --shadow: 0 12px 30px rgba(24,48,68,.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #e8f7ff, var(--bg) 45%, #fff);
+      color: var(--ink);
+    }
+
+    header {
+      text-align: center;
+      padding: 28px 16px 10px;
+    }
+
+    h1 {
+      font-size: clamp(30px, 6vw, 50px);
+      margin: 0;
+      letter-spacing: -0.05em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 920px;
+      margin: 8px auto 0;
+      line-height: 1.45;
+    }
+
+    main {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: rgba(255,255,255,.94);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+    }
+
+    .hero {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .badge {
+      min-width: 96px;
+      height: 96px;
+      border-radius: 28px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 44px;
+      font-weight: 900;
+    }
+
+    .badge.good { background: var(--good); }
+    .badge.ok { background: var(--ok); }
+    .badge.bad { background: var(--bad); }
+
+    h2 {
+      margin: 0 0 4px;
+      font-size: 30px;
+      letter-spacing: -0.03em;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .status {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    button {
+      border: 0;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 800;
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button.secondary {
+      background: #e9f3fa;
+      color: #14527d;
+    }
+
+    button:hover {
+      filter: brightness(.98);
+    }
+
+    .pillbox {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: #f8fcff;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+
+    .pill.good {
+      border-color: #bdebd9;
+      background: #effbf7;
+      color: #087a52;
+    }
+
+    .pill.ok {
+      border-color: #ffe1a8;
+      background: #fff8e9;
+      color: #8a5700;
+    }
+
+    .pill.bad {
+      border-color: #ffc9c9;
+      background: #fff2f2;
+      color: #9b1c1c;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tabGroup {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      background: #edf6fc;
+      color: #1e638e;
+    }
+
+    .tab.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .modeWrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f7fbfe;
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+
+    .modeLabel {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .modeToggle {
+      display: flex;
+      background: #e9f3fa;
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .modeBtn {
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 13px;
+      background: transparent;
+      color: #14527d;
+    }
+
+    .modeBtn.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .modeNote {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .day {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .day h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .big {
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .big.good { color: var(--good); }
+    .big.ok { color: #b16d00; }
+    .big.bad { color: var(--bad); }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .metric {
+      background: #f7fbfe;
+      border: 1px solid #e6f0f6;
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    .metric b {
+      display: block;
+      color: #557083;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .metric span {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .reason {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .reco {
+      background: linear-gradient(135deg, #eef8ff, #f7fff5);
+      border: 1px solid #cce9fb;
+      border-radius: 18px;
+      padding: 14px;
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .hourBlock {
+      border-radius: 12px;
+      min-height: 62px;
+      padding: 7px 4px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 800;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .hourBlock.good {
+      background: #e8fff5;
+      color: #087a52;
+    }
+
+    .hourBlock.ok {
+      background: #fff7e5;
+      color: #8a5700;
+    }
+
+    .hourBlock.bad {
+      background: #fff0f0;
+      color: #9b1c1c;
+    }
+
+    .packGrid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .packItem {
+      background: #f7fbfe;
+      border: 1px solid #d9e7ef;
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+    }
+
+    th {
+      text-align: left;
+      color: #597486;
+      font-size: 12px;
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+
+    td {
+      background: #fff;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      font-size: 14px;
+    }
+
+    td:first-child {
+      border-left: 1px solid var(--line);
+      border-radius: 12px 0 0 12px;
+      font-weight: 800;
+    }
+
+    td:last-child {
+      border-right: 1px solid var(--line);
+      border-radius: 0 12px 12px 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .note {
+      background: #eef8ff;
+      border: 1px solid #cce9fb;
+      color: #184d6b;
+      border-radius: 14px;
+      padding: 12px;
+      line-height: 1.4;
+    }
+
+    a {
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    .confetti {
+      position: fixed;
+      top: -14px;
+      width: 9px;
+      height: 14px;
+      border-radius: 3px;
+      opacity: 0.95;
+      z-index: 9999;
+      pointer-events: none;
+      animation: confettiFall 2.2s linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(105vh) rotate(760deg);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 850px) {
+      .top,
+      .grid3 {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        align-items: flex-start;
+      }
+
+      .badge {
+        min-width: 76px;
+        height: 76px;
+        font-size: 34px;
+      }
+
+      .tabs {
+        align-items: stretch;
+      }
+
+      .modeWrap {
+        width: 100%;
+        justify-content: space-between;
+        border-radius: 18px;
+      }
+
+      .timeline {
+        grid-template-columns: repeat(6, 1fr);
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>🏊 Midland Pool Day</h1>
+    <p class="subtitle">
+      Live pool-day helper for Midland, Texas using Open-Meteo forecast and air-quality data.
+      Switch between Toddler Mode and Adult Mode to change how conservative the recommendation is.
+    </p>
+  </header>
+
+  <main>
+    <section class="top">
+      <div class="card">
+        <div class="hero">
+          <div id="badge" class="badge ok">?</div>
+          <div>
+            <h2 id="headline">Load live weather</h2>
+            <div id="summary" class="muted">
+              Click the button to fetch today plus the next 2 days for Midland.
+            </div>
+            <div id="score" class="status"></div>
+          </div>
+        </div>
+        <div id="reasons" class="pillbox"></div>
+      </div>
+
+      <div class="card">
+        <div class="note">
+          <b>Data source:</b> Open-Meteo forecast + air quality APIs. No API key required.
+          Dust risk is estimated using wind speed, wind direction, PM10, humidity, and precipitation probability.
+        </div>
+        <p>
+          <button id="refreshBtn">Refresh live weather</button>
+          <button id="sampleBtn" class="secondary">Load sample</button>
+        </p>
+        <div id="loadStatus" class="status"></div>
+        <div id="modeNote" class="modeNote"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="tabs">
+        <div class="tabGroup">
+          <button class="tab active" data-tab="daily">Daily view</button>
+          <button class="tab" data-tab="hourly">Hourly details</button>
+          <button class="tab" data-tab="rules">Decision rules</button>
+          <button class="tab" data-tab="sources">Sources</button>
+        </div>
+
+        <div class="modeWrap">
+          <span class="modeLabel">Mode</span>
+          <div class="modeToggle">
+            <button id="toddlerModeBtn" class="modeBtn active" type="button">👶 Toddler</button>
+            <button id="adultModeBtn" class="modeBtn" type="button">🧑 Adult</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="daily" class="card">
+      <div id="dailyGrid" class="grid3"></div>
+    </section>
+
+    <section id="extras" class="card">
+      <h3>Today’s best pool plan</h3>
+      <div id="smartRecommendation" class="reco">Load weather to get a recommendation.</div>
+
+      <h3 style="margin-top:18px;">Best time window</h3>
+      <div id="timeline" class="timeline"></div>
+
+      <h3 style="margin-top:18px;">What to pack</h3>
+      <div id="packList" class="packGrid"></div>
+    </section>
+
+    <section id="hourly" class="card hidden">
+      <label for="daySelect"><b>Day</b></label>
+      <select id="daySelect" style="max-width: 320px; margin: 8px 0 14px; padding: 10px; border-radius: 12px; border: 1px solid var(--line);"></select>
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Verdict</th>
+              <th>Temp</th>
+              <th>Rain</th>
+              <th>UV</th>
+              <th>Wind</th>
+              <th>AQI</th>
+              <th>PM10</th>
+              <th>Dust</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody id="hourRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="rules" class="card hidden">
+      <h3>How it decides</h3>
+
+      <h4>👶 Toddler Mode</h4>
+      <ul>
+        <li>Stricter on UV, heat, AQI, PM10, wind, and dust.</li>
+        <li>Penalizes midday UV more heavily from 11 AM to 4 PM.</li>
+        <li>More likely to recommend morning/evening windows or indoor play.</li>
+      </ul>
+
+      <h4>🧑 Adult Mode</h4>
+      <ul>
+        <li>More tolerant of heat, UV, wind, and moderate air quality.</li>
+        <li>Still rejects dangerous heat, poor AQI, high dust, and high rain/storm chances.</li>
+      </ul>
+
+      <h4>General rules</h4>
+      <ul>
+        <li><b>Great:</b> warm but not too hot, low rain, low/moderate wind, manageable UV, acceptable air quality.</li>
+        <li><b>Maybe:</b> hot, breezy, high UV, moderate PM10/dust, or some shower risk. Prefer morning or evening.</li>
+        <li><b>Skip:</b> dangerous heat, strong wind, high rain/storm risk, poor air quality, or high dust risk.</li>
+      </ul>
+    </section>
+
+    <section id="sources" class="card hidden">
+      <h3>Sources</h3>
+      <p>
+        Forecast:
+        <a target="_blank" rel="noreferrer" href="https://open-meteo.com/">Open-Meteo Forecast API</a>
+      </p>
+      <p>
+        Air quality:
+        <a target="_blank" rel="noreferrer" href="https://open-meteo.com/en/docs/air-quality-api">Open-Meteo Air Quality API</a>
+      </p>
+      <p>
+        Cross-check:
+        <a target="_blank" rel="noreferrer" href="https://forecast.weather.gov/MapClick.php?lat=31.9973&lon=-102.0779">NWS Midland forecast</a>
+        |
+        <a target="_blank" rel="noreferrer" href="https://www.airnow.gov/?city=Midland&state=TX&country=USA">AirNow Midland</a>
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const LAT = 31.9973;
+    const LON = -102.0779;
+    const TZ = "America/Chicago";
+
+    let appData = [];
+    let mode = "toddler";
+    let lastConfettiKey = "";
+
+    const $ = id => document.getElementById(id);
+
+    const MODE_CONFIG = {
+      toddler: {
+        label: "Toddler Mode",
+        summary: "Toddler Mode is conservative: stricter on UV, heat, wind, AQI, PM10, and blowing dust.",
+        rainSkip: 55,
+        rainMaybe: 30,
+        tempMin: 75,
+        tempHot: 92,
+        tempVeryHot: 96,
+        tempDanger: 102,
+        windMaybe: 18,
+        windSkip: 25,
+        uvHigh: 6,
+        uvVeryHigh: 8,
+        uvExtreme: 10,
+        aqiModerate: 75,
+        aqiSensitive: 100,
+        aqiBad: 150,
+        pm10Some: 60,
+        pm10Elevated: 100,
+        pm10High: 150,
+        middayUvMultiplier: 1.25,
+        verdictGreat: 75,
+        verdictMaybe: 50
+      },
+      adult: {
+        label: "Adult Mode",
+        summary: "Adult Mode is more relaxed: still cautious about storms, dangerous heat, high dust, and poor air quality.",
+        rainSkip: 65,
+        rainMaybe: 40,
+        tempMin: 70,
+        tempHot: 96,
+        tempVeryHot: 101,
+        tempDanger: 106,
+        windMaybe: 22,
+        windSkip: 32,
+        uvHigh: 7,
+        uvVeryHigh: 9,
+        uvExtreme: 11,
+        aqiModerate: 90,
+        aqiSensitive: 125,
+        aqiBad: 175,
+        pm10Some: 80,
+        pm10Elevated: 125,
+        pm10High: 180,
+        middayUvMultiplier: 1.0,
+        verdictGreat: 72,
+        verdictMaybe: 45
+      }
+    };
+
+    function clamp(x, min, max) {
+      return Math.max(min, Math.min(max, x));
+    }
+
+    function avg(nums) {
+      nums = nums.filter(x => Number.isFinite(x));
+      return nums.length ? nums.reduce((a,b) => a + b, 0) / nums.length : null;
+    }
+
+    function max(nums) {
+      nums = nums.filter(x => Number.isFinite(x));
+      return nums.length ? Math.max(...nums) : null;
+    }
+
+    function min(nums) {
+      nums = nums.filter(x => Number.isFinite(x));
+      return nums.length ? Math.min(...nums) : null;
+    }
+
+    function windDirText(deg) {
+      if (!Number.isFinite(deg)) return "";
+      const dirs = ["N","NE","E","SE","S","SW","W","NW"];
+      return dirs[Math.round(deg / 45) % 8];
+    }
+
+    function fmtDate(dateStr) {
+      const d = new Date(dateStr + "T12:00:00");
+      return d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+    }
+
+    function fmtHour(iso) {
+      return new Date(iso).toLocaleTimeString([], { hour: "numeric" });
+    }
+
+    function classifyDust({ windMph, windDirDeg, pm10, humidity, rainChance }) {
+      let score = 0;
+      const dir = windDirText(windDirDeg);
+
+      if (windMph >= 30) score += 4;
+      else if (windMph >= 24) score += 3;
+      else if (windMph >= 18) score += 2;
+      else if (windMph >= 14) score += 1;
+
+      if (["W", "SW", "NW"].includes(dir)) score += 1;
+
+      if (Number.isFinite(pm10)) {
+        if (pm10 >= 150) score += 4;
+        else if (pm10 >= 100) score += 3;
+        else if (pm10 >= 60) score += 2;
+        else if (pm10 >= 35) score += 1;
+      }
+
+      if (Number.isFinite(humidity) && humidity < 20) score += 1;
+      if (Number.isFinite(rainChance) && rainChance >= 40) score -= 1;
+
+      if (score >= 5) return "High";
+      if (score >= 2) return "Moderate";
+      return "Low";
+    }
+
+    function classifyPool(x, hour = null) {
+      const cfg = MODE_CONFIG[mode];
+
+      let score = 100;
+      const reasons = [];
+
+      const temp = x.tempF;
+      const rain = x.rainChance ?? 0;
+      const uv = x.uv ?? 0;
+      const wind = x.windMph ?? 0;
+      const aqi = x.usAqi;
+      const pm10 = x.pm10;
+      const dust = x.dustRisk || "Low";
+
+      if (rain > cfg.rainSkip) {
+        score -= mode === "toddler" ? 45 : 38;
+        reasons.push("high rain chance");
+      } else if (rain > cfg.rainMaybe) {
+        score -= mode === "toddler" ? 22 : 14;
+        reasons.push("possible showers");
+      }
+
+      if (temp < cfg.tempMin) {
+        score -= mode === "toddler" ? 38 : 22;
+        reasons.push("too cool for pool");
+      } else if (temp > cfg.tempDanger) {
+        score -= mode === "toddler" ? 48 : 42;
+        reasons.push("dangerously hot");
+      } else if (temp > cfg.tempVeryHot) {
+        score -= mode === "toddler" ? 22 : 15;
+        reasons.push("very hot");
+      } else if (temp > cfg.tempHot) {
+        score -= mode === "toddler" ? 10 : 5;
+        reasons.push("hot");
+      }
+
+      if (uv >= cfg.uvExtreme) {
+        let penalty = mode === "toddler" ? 30 : 18;
+        if (hour !== null && hour >= 11 && hour <= 16) penalty *= cfg.middayUvMultiplier;
+        score -= penalty;
+        reasons.push("extreme UV");
+      } else if (uv >= cfg.uvVeryHigh) {
+        let penalty = mode === "toddler" ? 20 : 12;
+        if (hour !== null && hour >= 11 && hour <= 16) penalty *= cfg.middayUvMultiplier;
+        score -= penalty;
+        reasons.push("very high UV");
+      } else if (uv >= cfg.uvHigh) {
+        score -= mode === "toddler" ? 7 : 3;
+        reasons.push("high UV");
+      }
+
+      if (wind >= cfg.windSkip) {
+        score -= mode === "toddler" ? 35 : 25;
+        reasons.push("too windy");
+      } else if (wind >= cfg.windMaybe) {
+        score -= mode === "toddler" ? 18 : 10;
+        reasons.push("breezy/windy");
+      }
+
+      if (Number.isFinite(aqi)) {
+        if (aqi > cfg.aqiBad) {
+          score -= mode === "toddler" ? 45 : 35;
+          reasons.push("unhealthy air quality");
+        } else if (aqi > cfg.aqiSensitive) {
+          score -= mode === "toddler" ? 30 : 20;
+          reasons.push("AQI elevated");
+        } else if (aqi > cfg.aqiModerate) {
+          score -= mode === "toddler" ? 12 : 6;
+          reasons.push("moderate AQI");
+        }
+      }
+
+      if (Number.isFinite(pm10)) {
+        if (pm10 >= cfg.pm10High) {
+          score -= mode === "toddler" ? 35 : 25;
+          reasons.push("high PM10 / dust");
+        } else if (pm10 >= cfg.pm10Elevated) {
+          score -= mode === "toddler" ? 22 : 14;
+          reasons.push("elevated PM10 / dust");
+        } else if (pm10 >= cfg.pm10Some) {
+          score -= mode === "toddler" ? 10 : 5;
+          reasons.push("some PM10 / dust");
+        }
+      }
+
+      if (dust === "High") {
+        score -= mode === "toddler" ? 30 : 20;
+        reasons.push("high blowing dust risk");
+      } else if (dust === "Moderate") {
+        score -= mode === "toddler" ? 12 : 6;
+        reasons.push("moderate blowing dust risk");
+      }
+
+      score = clamp(Math.round(score), 0, 100);
+
+      let verdict;
+      if (score >= cfg.verdictGreat) verdict = "Great";
+      else if (score >= cfg.verdictMaybe) verdict = "Maybe";
+      else verdict = "Skip";
+
+      return {
+        score,
+        verdict,
+        reasons: reasons.length ? reasons : ["conditions look reasonable"]
+      };
+    }
+
+    function className(verdict) {
+      return verdict === "Great" ? "good" : verdict === "Maybe" ? "ok" : "bad";
+    }
+
+    function icon(verdict) {
+      return verdict === "Great" ? "✓" : verdict === "Maybe" ? "~" : "!";
+    }
+
+    function summarizeDay(day) {
+      const poolHours = day.hours.filter(h => {
+        const hour = new Date(h.time).getHours();
+        return hour >= 8 && hour <= 19;
+      });
+
+      const scored = poolHours.map(h => ({
+        ...h,
+        decision: classifyPool(h, new Date(h.time).getHours())
+      }));
+
+      const best = scored
+        .filter(h => h.decision.score >= MODE_CONFIG[mode].verdictMaybe)
+        .sort((a,b) => b.decision.score - a.decision.score)
+        .slice(0, 3);
+
+      const worstFlags = [];
+
+      if (max(poolHours.map(h => h.uv)) >= MODE_CONFIG[mode].uvVeryHigh) worstFlags.push("high UV");
+      if (max(poolHours.map(h => h.windMph)) >= MODE_CONFIG[mode].windMaybe) worstFlags.push("wind");
+      if (max(poolHours.map(h => h.rainChance)) >= MODE_CONFIG[mode].rainMaybe) worstFlags.push("rain risk");
+      if (max(poolHours.map(h => h.pm10)) >= MODE_CONFIG[mode].pm10Some) worstFlags.push("dust/PM10");
+      if (max(poolHours.map(h => h.usAqi)) >= MODE_CONFIG[mode].aqiModerate) worstFlags.push("AQI");
+
+      const representative = {
+        tempF: max(poolHours.map(h => h.tempF)),
+        rainChance: max(poolHours.map(h => h.rainChance)),
+        uv: max(poolHours.map(h => h.uv)),
+        windMph: max(poolHours.map(h => h.windMph)),
+        windDirDeg: avg(poolHours.map(h => h.windDirDeg)),
+        usAqi: max(poolHours.map(h => h.usAqi)),
+        pm10: max(poolHours.map(h => h.pm10)),
+        dustRisk: ["High", "Moderate", "Low"].find(level => poolHours.some(h => h.dustRisk === level)) || "Low"
+      };
+
+      const decision = classifyPool(representative, 14);
+
+      return {
+        date: day.date,
+        label: fmtDate(day.date),
+        high: Math.round(max(poolHours.map(h => h.tempF)) ?? 0),
+        low: Math.round(min(poolHours.map(h => h.tempF)) ?? 0),
+        maxRain: Math.round(max(poolHours.map(h => h.rainChance)) ?? 0),
+        maxUv: Math.round(max(poolHours.map(h => h.uv)) ?? 0),
+        maxWind: Math.round(max(poolHours.map(h => h.windMph)) ?? 0),
+        windDir: windDirText(avg(poolHours.map(h => h.windDirDeg))),
+        maxAqi: Math.round(max(poolHours.map(h => h.usAqi)) ?? 0),
+        maxPm10: Math.round(max(poolHours.map(h => h.pm10)) ?? 0),
+        dustRisk: representative.dustRisk,
+        best,
+        decision,
+        flags: worstFlags
+      };
+    }
+
+    function makeSmartRecommendation(daySummary) {
+      const best = daySummary.best || [];
+      const cfg = MODE_CONFIG[mode];
+
+      if (!best.length) {
+        return `${cfg.label}: I’d skip the pool today. The forecast has enough heat, wind, rain, UV, dust, or air-quality concerns that indoor play is the safer bet.`;
+      }
+
+      const bestTimes = best.map(h => fmtHour(h.time)).join(", ");
+      const flags = daySummary.flags.length ? daySummary.flags.join(", ") : "no major issues";
+
+      if (daySummary.decision.verdict === "Great") {
+        return `${cfg.label}: Best bet is around ${bestTimes}. Conditions look pool-friendly overall. Main things to watch: ${flags}. Bring sunscreen, water, and shade just to be safe.`;
+      }
+
+      if (daySummary.decision.verdict === "Maybe") {
+        return `${cfg.label}: Possible, but be selective. Best windows appear to be ${bestTimes}. Watch for ${flags}, and avoid the hottest/brightest part of the afternoon.`;
+      }
+
+      return `${cfg.label}: Not ideal today. If you go anyway, keep it short and aim for ${bestTimes}. Main concerns: ${flags}.`;
+    }
+
+    function makePackList(daySummary) {
+      const items = ["🧴 Sunscreen", "🧢 Hat", "💧 Water", "🧻 Towels", "🍎 Snacks"];
+
+      if (daySummary.maxUv >= MODE_CONFIG[mode].uvVeryHigh) items.push("⛱️ Shade / umbrella");
+      if (daySummary.high >= MODE_CONFIG[mode].tempHot) items.push("🧊 Cold drinks");
+      if (daySummary.maxWind >= MODE_CONFIG[mode].windMaybe) items.push("🧷 Clips for towels");
+      if (daySummary.maxRain >= MODE_CONFIG[mode].rainMaybe) items.push("☔ Backup indoor plan");
+      if (daySummary.maxAqi >= MODE_CONFIG[mode].aqiModerate || daySummary.maxPm10 >= MODE_CONFIG[mode].pm10Some || daySummary.dustRisk !== "Low") {
+        items.push("😷 Allergy/dust caution");
+      }
+
+      if (mode === "toddler") {
+        items.push("🧸 Pool toy");
+        items.push("👕 Dry clothes");
+      }
+
+      return items;
+    }
+
+    function renderTimeline(day) {
+      const poolHours = day.hours.filter(h => {
+        const hour = new Date(h.time).getHours();
+        return hour >= 8 && hour <= 19;
+      });
+
+      $("timeline").innerHTML = poolHours.map(h => {
+        const hour = new Date(h.time).getHours();
+        const d = classifyPool(h, hour);
+        const c = className(d.verdict);
+
+        return `
+          <div class="hourBlock ${c}" title="${d.reasons.join("; ")}">
+            <div>${fmtHour(h.time)}</div>
+            <div style="font-size:18px;">${icon(d.verdict)}</div>
+            <div>${Math.round(h.tempF)}°</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function showConfetti() {
+      const colors = ["#19a974", "#1479c9", "#f5a623", "#df4b4b", "#61dafb", "#ffffff"];
+
+      for (let i = 0; i < 70; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti";
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * 0.55 + "s";
+        piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+        document.body.appendChild(piece);
+
+        setTimeout(() => piece.remove(), 2600);
+      }
+    }
+
+    async function fetchJson(url) {
+      const r = await fetch(url);
+      if (!r.ok) {
+        throw new Error(`${r.status} ${r.statusText}`);
+      }
+      return r.json();
+    }
+
+    async function loadWeather() {
+      $("loadStatus").textContent = "Loading live weather…";
+
+      try {
+        const forecastUrl =
+          "https://api.open-meteo.com/v1/forecast" +
+          `?latitude=${LAT}&longitude=${LON}` +
+          `&timezone=${encodeURIComponent(TZ)}` +
+          "&forecast_days=3" +
+          "&temperature_unit=fahrenheit" +
+          "&wind_speed_unit=mph" +
+          "&precipitation_unit=inch" +
+          "&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,wind_speed_10m,wind_direction_10m,uv_index";
+
+        const airUrl =
+          "https://air-quality-api.open-meteo.com/v1/air-quality" +
+          `?latitude=${LAT}&longitude=${LON}` +
+          `&timezone=${encodeURIComponent(TZ)}` +
+          "&forecast_days=3" +
+          "&hourly=pm10,pm2_5,us_aqi";
+
+        const [forecast, air] = await Promise.all([
+          fetchJson(forecastUrl),
+          fetchJson(airUrl)
+        ]);
+
+        const f = forecast.hourly;
+        const a = air.hourly;
+
+        const airByTime = new Map();
+        for (let i = 0; i < a.time.length; i++) {
+          airByTime.set(a.time[i], {
+            pm10: a.pm10?.[i],
+            pm25: a.pm2_5?.[i],
+            usAqi: a.us_aqi?.[i]
+          });
+        }
+
+        const byDate = new Map();
+
+        for (let i = 0; i < f.time.length; i++) {
+          const time = f.time[i];
+          const date = time.slice(0, 10);
+          const airRow = airByTime.get(time) || {};
+
+          const row = {
+            time,
+            tempF: f.temperature_2m?.[i],
+            humidity: f.relative_humidity_2m?.[i],
+            rainChance: f.precipitation_probability?.[i],
+            windMph: f.wind_speed_10m?.[i],
+            windDirDeg: f.wind_direction_10m?.[i],
+            uv: f.uv_index?.[i],
+            pm10: airRow.pm10,
+            pm25: airRow.pm25,
+            usAqi: airRow.usAqi
+          };
+
+          row.dustRisk = classifyDust(row);
+
+          if (!byDate.has(date)) {
+            byDate.set(date, { date, hours: [] });
+          }
+
+          byDate.get(date).hours.push(row);
+        }
+
+        appData = Array.from(byDate.values()).slice(0, 3);
+
+        $("loadStatus").textContent =
+          "Loaded live data at " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + ".";
+
+        render();
+      } catch (err) {
+        console.error(err);
+        $("loadStatus").textContent =
+          "Could not load live weather: " + err.message +
+          ". If you opened the file directly, try VS Code Live Server.";
+      }
+    }
+
+    function loadSample() {
+      const now = new Date();
+
+      appData = [0,1,2].map(dayOffset => {
+        const d = new Date(now);
+        d.setDate(now.getDate() + dayOffset);
+        const date = d.toISOString().slice(0,10);
+        const hours = [];
+
+        for (let h = 0; h < 24; h++) {
+          const tempPeak = [94, 99, 88][dayOffset];
+          const heat = Math.max(0, 1 - Math.abs(h - 15) / 8);
+          const tempF = Math.round(tempPeak - 14 + heat * 14);
+          const windMph = [13, 21, 26][dayOffset] + (h > 13 ? 2 : 0);
+          const windDirDeg = [180, 235, 270][dayOffset];
+          const rainChance = [10, 25, 55][dayOffset];
+          const uv = Math.round([9, 10, 6][dayOffset] * Math.max(0, 1 - Math.abs(h - 13) / 6));
+          const pm10 = [35, 75, 120][dayOffset];
+          const humidity = [35, 22, 45][dayOffset];
+
+          const row = {
+            time: `${date}T${String(h).padStart(2,"0")}:00`,
+            tempF,
+            humidity,
+            rainChance,
+            windMph,
+            windDirDeg,
+            uv,
+            pm10,
+            pm25: Math.round(pm10 / 3),
+            usAqi: [55, 85, 115][dayOffset]
+          };
+
+          row.dustRisk = classifyDust(row);
+          hours.push(row);
+        }
+
+        return { date, hours };
+      });
+
+      $("loadStatus").textContent = "Loaded sample data.";
+      render();
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+
+      $("toddlerModeBtn").classList.toggle("active", mode === "toddler");
+      $("adultModeBtn").classList.toggle("active", mode === "adult");
+
+      render();
+    }
+
+    function render() {
+      const cfg = MODE_CONFIG[mode];
+      $("modeNote").textContent = cfg.summary;
+
+      if (!appData.length) {
+        $("headline").textContent = "Load live weather";
+        $("summary").textContent = `Current mode: ${cfg.label}. Click the button to fetch live weather for Midland.`;
+        $("badge").className = "badge ok";
+        $("badge").textContent = "?";
+        $("score").textContent = "";
+        $("reasons").innerHTML = "";
+        $("dailyGrid").innerHTML = "";
+        $("hourRows").innerHTML = "";
+        $("smartRecommendation").textContent = "Load weather to get a recommendation.";
+        $("timeline").innerHTML = "";
+        $("packList").innerHTML = "";
+        return;
+      }
+
+      const summaries = appData.map(summarizeDay);
+      const today = summaries[0];
+
+      const greatCount = summaries.filter(d => d.decision.verdict === "Great").length;
+      const confettiKey = `${mode}-${summaries.map(d => d.decision.verdict).join("-")}-${summaries.map(d => d.date).join("-")}`;
+
+      if (greatCount === 3 && confettiKey !== lastConfettiKey) {
+        lastConfettiKey = confettiKey;
+        setTimeout(showConfetti, 150);
+      }
+
+      $("badge").className = "badge " + className(today.decision.verdict);
+      $("badge").textContent = icon(today.decision.verdict);
+
+      $("headline").textContent = `${today.decision.verdict} pool day for ${today.label}`;
+
+      $("summary").textContent =
+        today.decision.verdict === "Great"
+          ? `${cfg.label}: Looks like a good pool day. Still plan shade, water, sunscreen, and breaks.`
+          : today.decision.verdict === "Maybe"
+            ? `${cfg.label}: Possible, but choose the safest window and watch the flagged conditions.`
+            : `${cfg.label}: I would skip or choose indoor play based on these conditions.`;
+
+      $("score").textContent = `Pool comfort score: ${today.decision.score}/100`;
+
+      $("reasons").innerHTML = today.decision.reasons
+        .map(r => `<span class="pill ${className(today.decision.verdict)}">${r}</span>`)
+        .join("");
+
+      $("dailyGrid").innerHTML = summaries.map((d, i) => {
+        const bestText = d.best.length
+          ? d.best.map(h => fmtHour(h.time)).join(", ")
+          : "No good window";
+
+        return `
+          <div class="day">
+            <h3>${i === 0 ? "Today" : i === 1 ? "Tomorrow" : d.label}</h3>
+            <div class="big ${className(d.decision.verdict)}">${icon(d.decision.verdict)} ${d.decision.verdict}</div>
+            <div class="status">${d.decision.score}/100 • ${cfg.label}</div>
+
+            <div class="metrics">
+              <div class="metric"><b>High</b><span>${d.high}°F</span></div>
+              <div class="metric"><b>Rain</b><span>${d.maxRain}%</span></div>
+              <div class="metric"><b>Max UV</b><span>${d.maxUv}</span></div>
+              <div class="metric"><b>Wind</b><span>${d.maxWind} ${d.windDir}</span></div>
+              <div class="metric"><b>AQI</b><span>${d.maxAqi || "—"}</span></div>
+              <div class="metric"><b>PM10</b><span>${d.maxPm10 || "—"}</span></div>
+              <div class="metric"><b>Dust</b><span>${d.dustRisk}</span></div>
+              <div class="metric"><b>Best times</b><span style="font-size:13px">${bestText}</span></div>
+            </div>
+
+            <div class="reason">${d.decision.reasons.join("; ")}</div>
+          </div>
+        `;
+      }).join("");
+
+      $("daySelect").innerHTML = summaries.map((d, i) =>
+        `<option value="${i}">${i === 0 ? "Today" : i === 1 ? "Tomorrow" : d.label}</option>`
+      ).join("");
+
+      $("smartRecommendation").textContent = makeSmartRecommendation(today);
+
+      $("packList").innerHTML = makePackList(today)
+        .map(item => `<span class="packItem">${item}</span>`)
+        .join("");
+
+      renderTimeline(appData[0]);
+      renderHours();
+    }
+
+    function renderHours() {
+      if (!appData.length) return;
+
+      const selectedIndex = Number($("daySelect").value || 0);
+      const day = appData[selectedIndex];
+
+      const rows = day.hours
+        .filter(h => {
+          const hour = new Date(h.time).getHours();
+          return hour >= 8 && hour <= 19;
+        })
+        .map(h => {
+          const hour = new Date(h.time).getHours();
+          const d = classifyPool(h, hour);
+
+          return `
+            <tr>
+              <td>${fmtHour(h.time)}</td>
+              <td><span class="pill ${className(d.verdict)}">${d.verdict}</span></td>
+              <td>${Math.round(h.tempF)}°F</td>
+              <td>${Math.round(h.rainChance ?? 0)}%</td>
+              <td>${Math.round(h.uv ?? 0)}</td>
+              <td>${Math.round(h.windMph ?? 0)} ${windDirText(h.windDirDeg)}</td>
+              <td>${Math.round(h.usAqi ?? 0) || "—"}</td>
+              <td>${Math.round(h.pm10 ?? 0) || "—"}</td>
+              <td>${h.dustRisk}</td>
+              <td>${d.reasons.join("; ")}</td>
+            </tr>
+          `;
+        }).join("");
+
+      $("hourRows").innerHTML = rows;
+    }
+
+    document.querySelectorAll(".tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        ["daily", "hourly", "rules", "sources"].forEach(id => {
+          $(id).classList.toggle("hidden", id !== btn.dataset.tab);
+        });
+
+        $("extras").classList.toggle("hidden", btn.dataset.tab !== "daily");
+      });
+    });
+
+    $("refreshBtn").addEventListener("click", loadWeather);
+    $("sampleBtn").addEventListener("click", loadSample);
+    $("daySelect").addEventListener("change", renderHours);
+
+    $("toddlerModeBtn").addEventListener("click", () => setMode("toddler"));
+    $("adultModeBtn").addEventListener("click", () => setMode("adult"));
+
+    loadWeather();
+  </script>
+</body>
+</html>
